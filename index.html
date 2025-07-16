@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aprende Nombres Científicos de Aves</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f5f5f5; color: #333; text-align: center; margin: 0; padding: 0; }
+    .container { max-width: 600px; margin: auto; padding: 20px; }
+    .card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-top: 40px; }
+    img { max-width: 100%; height: auto; border-radius: 8px; }
+    input { width: 80%; padding: 10px; margin: 15px 0; border: 1px solid #ccc; border-radius: 6px; }
+    button { padding: 10px 20px; border: none; border-radius: 6px; background: #28a745; color: white; cursor: pointer; font-size: 16px; }
+    button:hover { background: #218838; }
+    .hidden { display: none; }
+    #feedback { font-weight: bold; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="intro" class="card">
+      <h1>Bienvenido a Aprender Nombres Científicos de Aves</h1>
+      <p>En esta actividad aprenderás y practicarás los nombres científicos de 23 especies de aves.</p>
+      <button id="startBtn">Comenzar</button>
+    </div>
+
+    <div id="quiz" class="card hidden">
+      <h2>Escribe el nombre científico de la especie mostrada</h2>
+      <img id="birdImg" src="" alt="Ave" />
+      <div>
+        <input type="text" id="answerInput" placeholder="Escribe aquí..." autocomplete="off" />
+      </div>
+      <button id="submitBtn">Comprobar</button>
+      <div id="feedback"></div>
+      <div id="progress"></div>
+    </div>
+
+    <div id="result" class="card hidden">
+      <h2>Resultado Final</h2>
+      <p id="scoreText"></p>
+      <button id="restartBtn">Volver a intentar</button>
+    </div>
+  </div>
+
+  <script>
+    const birds = [
+      { name: 'Amazilia amazilia', image: 'images/Amazilia_amazilia.jpg' },
+      { name: 'Tyrannus melancholicus', image: 'images/Tyrannus_melancholicus.jpg' },
+      { name: 'Coereba flaveola', image: 'images/Coereba_flaveola.jpg' },
+      { name: 'Sicalis flaveola', image: 'images/Sicalis_flaveola.jpg' },
+      { name: 'Pyrocephalus rubinus', image: 'images/Pyrocephalus_rubinus.jpg' },
+      { name: 'Columbina cruziana', image: 'images/Columbina_cruziana.jpg' },
+      { name: 'Zenaida meloda', image: 'images/Zenaida_meloda.jpg' },
+      { name: 'Dives warczewiczi', image: 'images/Dives_warczewiczi.jpg' },
+      { name: 'Thraupis episcopus', image: 'images/Thraupis_episcopus.jpg' },
+      { name: 'Camptostoma obsoletum', image: 'images/Camptostoma_obsoletum.jpg' },
+      { name: 'Zonotrichia capensis', image: 'images/Zonotrichia_capensis.jpg' },
+      { name: 'Psittacara sp.', image: 'images/Psittacara_sp.jpg' },
+      { name: 'Troglodytes aedon', image: 'images/Troglodytes_aedon.jpg' },
+      { name: 'Mimus longicaudatus', image: 'images/Mimus_longicaudatus.jpg' },
+      { name: 'Volatinia jacarina', image: 'images/Volatinia_jacarina.jpg' },
+      { name: 'Coragyps atrautus', image: 'images/Coragyps_atrautus.jpg' },
+      { name: 'Parabuteo unicinctus', image: 'images/Parabuteo_unicinctus.jpg' },
+      { name: 'Pygochelidon cyanoleuca', image: 'images/Pygochelidon_cyanoleuca.jpg' },
+      { name: 'Passer domesticus', image: 'images/Passer_domesticus.jpg' },
+      { name: 'Columba livia', image: 'images/Columba_livia.jpg' },
+      { name: 'Falco sparverius', image: 'images/Falco_sparverius.jpg' },
+      { name: 'Burhinus superciliaris', image: 'images/Burhinus_superciliaris.jpg' },
+      { name: 'Athene cunicularia', image: 'images/Athene_cunicularia.jpg' }
+    ];
+
+    let shuffled = [];
+    let currentIndex = 0;
+    let score = 0;
+
+    const introEl = document.getElementById('intro');
+    const quizEl = document.getElementById('quiz');
+    const resultEl = document.getElementById('result');
+    const birdImg = document.getElementById('birdImg');
+    const answerInput = document.getElementById('answerInput');
+    const feedback = document.getElementById('feedback');
+    const progress = document.getElementById('progress');
+    const scoreText = document.getElementById('scoreText');
+
+    document.getElementById('startBtn').addEventListener('click', startQuiz);
+    document.getElementById('submitBtn').addEventListener('click', checkAnswer);
+    document.getElementById('restartBtn').addEventListener('click', startQuiz);
+
+    function startQuiz() {
+      shuffled = birds.sort(() => 0.5 - Math.random());
+      currentIndex = 0;
+      score = 0;
+      introEl.classList.add('hidden');
+      resultEl.classList.add('hidden');
+      quizEl.classList.remove('hidden');
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      const bird = shuffled[currentIndex];
+      birdImg.src = bird.image;
+      answerInput.value = '';
+      feedback.textContent = '';
+      progress.textContent = `Pregunta ${currentIndex + 1} de ${birds.length}`;
+    }
+
+    function checkAnswer() {
+      const bird = shuffled[currentIndex];
+      const userAnswer = answerInput.value.trim();
+      if (!userAnswer) return;
+      if (userAnswer.toLowerCase() === bird.name.toLowerCase()) {
+        feedback.textContent = 'Correcto 🎉';
+        score++;
+      } else {
+        feedback.textContent = `Incorrecto. Respuesta correcta: ${bird.name}`;
+      }
+      currentIndex++;
+      if (currentIndex < birds.length) {
+        setTimeout(loadQuestion, 1500);
+      } else {
+        setTimeout(showResult, 1500);
+      }
+    }
+
+    function showResult() {
+      quizEl.classList.add('hidden');
+      scoreText.textContent = `Obtuviste ${score} de ${birds.length} correctas.`;
+      resultEl.classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
